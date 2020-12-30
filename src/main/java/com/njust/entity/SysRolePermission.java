@@ -1,0 +1,20 @@
+package com.njust.entity;
+
+import lombok.Data;
+import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.Date;
+
+@Data
+@ToString
+public class SysRolePermission implements Serializable {
+    private String id;
+
+    private String roleId;
+
+    private String permissionId;
+
+    private Date createTime;
+
+}
