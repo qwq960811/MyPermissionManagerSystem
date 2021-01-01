@@ -3,13 +3,13 @@ package com.njust.controller;
 import com.njust.entity.SysPermission;
 import com.njust.service.PermissionService;
 import com.njust.utils.DataResult;
+import com.njust.vo.req.PermissionAddReqVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -41,6 +41,14 @@ public class PermissionController {
     public DataResult<List<SysPermission>> getAllMenusPermissionTree(){
         DataResult result = DataResult.success();
         result.setData(permissionService.selectAllMenuByTree());
+        return result;
+    }
+
+    @PostMapping("permission")
+    @ApiOperation(value="新增菜单权限接口")
+    public DataResult<SysPermission> addPermission(@RequestBody @Valid PermissionAddReqVO vo){
+        DataResult result = DataResult.success();
+        result.setData(permissionService.addPermission(vo));
         return result;
     }
 }

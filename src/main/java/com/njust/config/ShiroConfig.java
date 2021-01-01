@@ -68,6 +68,7 @@ public class ShiroConfig {
         map.put("/index/**", "anon");
         map.put("/images/**", "anon");
         map.put("/js/**", "anon");
+        map.put("/css/**", "anon");
         map.put("/layui/**", "anon");
         map.put("/treetable-lay/**", "anon");
         //放开swagger-ui地址

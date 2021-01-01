@@ -2,15 +2,21 @@ package com.njust.service.impl;
 
 import com.njust.dao.SysPermissionMapper;
 import com.njust.entity.SysPermission;
+import com.njust.exception.BusinessException;
+import com.njust.exception.code.BaseResponseCode;
 import com.njust.service.PermissionService;
+import com.njust.vo.req.PermissionAddReqVO;
 import com.njust.vo.resp.PermissionRespNode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @ Description   :  java类作用描述
@@ -53,6 +59,68 @@ public class PermissionServiceImpl implements PermissionService {
         list.add(permissionRespNode);
         return list;
         //return getTree(SysPermissionMapper.selectAll());
+    }
+
+    @Override
+    public SysPermission addPermission(PermissionAddReqVO vo) {
+        SysPermission sysPermission = new SysPermission();
+        BeanUtils.copyProperties(vo,sysPermission);
+        sysPermission.setId(UUID.randomUUID().toString());
+        sysPermission.setCreateTime(new Date());
+        int count = SysPermissionMapper.insertSelective(sysPermission);
+        if(count!=1){
+            throw new BusinessException(BaseResponseCode.OPERATION_ERROR);
+        }
+        return sysPermission;
+    }
+
+    @Override
+    public List<PermissionRespNode> permissionTreeList(String userId) {
+        return getTree(selectAll());
+    }
+
+    private void verifyForm(SysPermission sysPermission){
+        SysPermission parent = SysPermissionMapper.selectByPrimaryKey(sysPermission.getPid());
+        switch(sysPermission.getType()){
+            case 1:
+                if(parent!=null){
+                    if(parent.getType()!=1){
+                        throw new BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_CATALOG_ERROR);
+                    }
+                } else if(!sysPermission.getPid().equals("0")){
+                    throw new BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_CATALOG_ERROR);
+                }
+                break;
+            case 2:
+                if(parent==null||parent.getType()!=1){
+                    throw new
+                            BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_MENU_ERROR);
+                }
+                if(StringUtils.isEmpty(sysPermission.getUrl())){
+                    throw new
+                            BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_URL_NOT_NULL);
+                }
+                break;
+            case 3:
+                if(parent==null||parent.getType()!=2){
+                    throw new
+                            BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_BTN_ERROR);
+                }
+                if(StringUtils.isEmpty(sysPermission.getPerms())){
+                    throw new
+                            BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_URL_PERMS_NULL);
+                }
+                if(StringUtils.isEmpty(sysPermission.getUrl())){
+                    throw new
+                            BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_URL_NOT_NULL);
+                }
+                if(StringUtils.isEmpty(sysPermission.getMethod())){
+                    throw new
+                            BusinessException(BaseResponseCode.OPERATION_MENU_PERMISSION_URL_METHOD_NULL);
+                }
+
+                break;
+        }
     }
 
 

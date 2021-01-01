@@ -1,6 +1,7 @@
 package com.njust.service;
 
 import com.njust.entity.SysPermission;
+import com.njust.vo.req.PermissionAddReqVO;
 import com.njust.vo.resp.PermissionRespNode;
 
 import java.util.List;
@@ -19,4 +20,9 @@ public interface PermissionService {
 
     /*获取菜单权限树*/
     List<PermissionRespNode> selectAllMenuByTree();
+
+    SysPermission addPermission(PermissionAddReqVO vo);
+
+    List<PermissionRespNode> permissionTreeList(String userId);
+
 }

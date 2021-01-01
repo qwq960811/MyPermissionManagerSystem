@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.njust.dao.SysUserMapper;
 import com.njust.entity.SysUser;
 import com.njust.service.HomeService;
+import com.njust.service.PermissionService;
 import com.njust.vo.resp.HomeRespVO;
 import com.njust.vo.resp.PermissionRespNode;
 import com.njust.vo.resp.UserInfoVO;
@@ -27,6 +28,9 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private PermissionService permissionService;
+
     @Override
     public HomeRespVO getHomeInfo(String userId) {
         HomeRespVO homeRespVO = new HomeRespVO();
@@ -42,28 +46,30 @@ public class HomeServiceImpl implements HomeService {
         homeRespVO.setUserInfo(userInfoVO);
 
         //菜单信息 (mock假数据)
-        String home="[\n" +
-                "    {\n" +
-                "        \"children\": [\n" +
-                "            {\n" +
-                "                \"children\": [],\n" +
-                "                \"id\": \"3\",\n" +
-                "                \"title\": \"菜单权限管理\",\n" +
-                "                \"url\": \"/index/menus\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"id\": \"1\",\n" +
-                "        \"title\": \"组织管理\",\n" +
-                "        \"url\": \"string\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"children\": [],\n" +
-                "        \"id\": \"2\",\n" +
-                "        \"title\": \"类目2\",\n" +
-                "        \"url\": \"string\"\n" +
-                "    }\n" +
-                "]";
-        List<PermissionRespNode> list = JSON.parseArray(home, PermissionRespNode.class);
+//        String home="[\n" +
+//                "    {\n" +
+//                "        \"children\": [\n" +
+//                "            {\n" +
+//                "                \"children\": [],\n" +
+//                "                \"id\": \"3\",\n" +
+//                "                \"title\": \"菜单权限管理\",\n" +
+//                "                \"url\": \"/index/menus\"\n" +
+//                "            }\n" +
+//                "        ],\n" +
+//                "        \"id\": \"1\",\n" +
+//                "        \"title\": \"组织管理\",\n" +
+//                "        \"url\": \"string\"\n" +
+//                "    },\n" +
+//                "    {\n" +
+//                "        \"children\": [],\n" +
+//                "        \"id\": \"2\",\n" +
+//                "        \"title\": \"类目2\",\n" +
+//                "        \"url\": \"string\"\n" +
+//                "    }\n" +
+//                "]";
+        //List<PermissionRespNode> list = JSON.parseArray(home, PermissionRespNode.class);
+        List<PermissionRespNode> list= permissionService.permissionTreeList(userId);
+
         homeRespVO.setMenus(list);
 
         return homeRespVO;
